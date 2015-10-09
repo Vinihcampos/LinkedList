@@ -9,16 +9,18 @@ class List{
 		// The main structure of List
 		struct Node{
 			Data info;
-			Node * before;
+			Node * previous;
 			Node * next;
 
-			Node(const Data & _info = Data(), Node * _before = nullptr, Node * _next = nullptr) :
-				info { _info }, before { _before }, next {_next}{}
+			Node(const Data & _info = Data(), Node * _previous = nullptr, Node * _next = nullptr) :
+				info { _info }, previous { _previous }, next {_next}{}
 		};
 
 		Node * head;
 		Node * tail;
 		int listSize;
+
+		void init();
 
 	//	Iterator classes
 	public:
@@ -31,7 +33,7 @@ class List{
 
 				const_iterator( Node * p );
 
-				friend class List<Data>
+				friend class List<Data>;
 
 			public:
 
@@ -99,7 +101,7 @@ class List{
 		bool empty() const;	// 	State of list
 		void clear();	// Clear the List
 
-		Data & front ( return * begin(); ); // Return the value of first element (with iterator)
+		Data & front () { return * begin(); }; // Return the value of first element (with iterator)
 		const Data & front() const;	// Return the value of first element (with const_iterator)
 
 		Data & back (); // Return the value of last element (with iterator)
