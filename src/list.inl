@@ -1,4 +1,9 @@
 #include "list.h"
+#include <iostream>
+#include <cstring>
+#include <stdexcept>
+
+using namespace std;
 
 /**
 *	const_interator class
@@ -12,43 +17,71 @@ List<Data>::const_iterator::const_iterator(List::Node * p) :
 //Return the value of current node
 template < typename Data >
 const Data & List<Data>::const_iterator::operator*() const{
-	return current->info;
+	if(current != nullptr)
+		return current->info;
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Return the next node
 template < typename Data >
 typename List<Data>::const_iterator & List<Data>::const_iterator::operator++(){
-	return current->next;
+	if(current != nullptr){
+		current = current->next;
+		return *this;
+	}
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Return the next node
 template < typename Data >
 typename List<Data>::const_iterator List<Data>::const_iterator::operator++( int ){
-	return current->next;
+	if(current != nullptr){
+		current = current->next;
+		return *this;
+	}
+	else 
+		throw runtime_error("Null point exception!");
 }
-
 //Return the previous node
 template < typename Data >
 typename List<Data>::const_iterator & List<Data>::const_iterator::operator--(){
-	return current->before;
+	if(current != nullptr){
+		current = current->previous;
+		return *this;
+	}
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Return the previous node
 template < typename Data >
 typename List<Data>::const_iterator List<Data>::const_iterator::operator--( int ){
-	return current->before;
+	if(current != nullptr){
+		current = current->previous;
+		return *this;
+	}
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Verify if iterators are equal
 template < typename Data >
 bool List<Data>::const_iterator::operator==( const const_iterator & rhs )const{
-	return current->info == rhs->info;
-}
+	if(current != nullptr && rhs.current != nullptr)
+		return current->info == rhs.current->info;
+	else
+		throw runtime_error("Null point exception!");
+}	
 
 //Verify if iterators are equal
 template < typename Data >
 bool List<Data>::const_iterator::operator!=( const const_iterator & rhs )const{
-	return current->info != rhs->info;
+	if(current != nullptr && rhs.current != nullptr)
+		return current->info != rhs.current->info;
+	else
+		throw runtime_error("Null point exception!");
 }
 
 /**
@@ -58,37 +91,63 @@ bool List<Data>::const_iterator::operator!=( const const_iterator & rhs )const{
 //Return the value of current node
 template < typename Data >
 const Data & List<Data>::iterator::operator*() const{
-	return this->current->info;
+	if(this->current != nullptr)
+		return this->current->info;
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Return the value of current node
 template < typename Data >
 Data & List<Data>::iterator::operator*(){
-	return this->current->info;
+	if(this->current != nullptr)
+		return this->current->info;
+	else 
+		throw runtime_error("Null point exception!");
 }
 
 //Return the next node
 template < typename Data >
 typename List<Data>::iterator & List<Data>::iterator::operator++(){
-	return this->current->next;
+	if(this->current != nullptr){
+		this->current = this->current->next;
+		return *this;
+	}else{ 
+		throw runtime_error("Null point exception!");
+	}
 }
 
 //Return the next node
 template < typename Data >
 typename List<Data>::iterator List<Data>::iterator::operator++( int ){
-	return this->current->next;
+	if(this->current != nullptr){
+		this->current = this->current->next;
+		return *this;
+	}else{ 
+		throw runtime_error("Null point exception!");
+	}
 }
 
 //Return the previous node
 template < typename Data >
 typename List<Data>::iterator & List<Data>::iterator::operator--(){
-	return this->current->before;
+	if(this->current != nullptr){
+		this->current = this->current->previous;
+		return *this;
+	}else{ 
+		throw runtime_error("Null point exception!");
+	}
 }
 
 //Return the previous node
 template < typename Data >
 typename List<Data>::iterator List<Data>::iterator::operator--( int ){
-	return this->current->before;
+	if(this->current != nullptr){
+		this->current = this->current->previous;
+		return *this;
+	}else{ 
+		throw runtime_error("Null point exception!");
+	}
 }
 
 /**
@@ -105,7 +164,7 @@ void List<Data>::init(){
 	tail = new Node;
 	
 	head->next = tail;
-	tail->before = head;
+	tail->previous = head;
 
 }
 //Constructor
@@ -118,5 +177,124 @@ List<Data>::List(){
 template < typename Data>
 List<Data>::List( const List & rhs ){
 	init();
-	*this = rhs;
+	if(!rhs.empty()){
+		Node * node = new Node(rhs.begin->info);
+		
+		head->next = node;
+		tail->previous = node;
+		node->previous = head;
+		node->next = tail;
+
+		for( auto i = rhs.begin()->next; i != rhs.end(); ++i ){
+			//	New node with info of current iterator
+			Node * newNode = new Node(*i);
+			
+			//	The previous tail receives newNode
+			tail->previous->next = newNode;
+
+			//	The previous newNode receives the previous tail
+			newNode->previous = tail->previous;
+
+			//	The previous tail receives newNode
+			tail->previous = newNode;
+
+			//	The next newNode receives tail
+			newNode->next = tail;
+		}
+	}	
 }
+
+template < typename Data >
+List<Data>::~List(){
+	clear();
+	delete head;
+	delete tail;
+}
+
+//Operator = 
+template < typename Data >
+const List<Data> & List<Data>::operator=(const List<Data> & rhs){
+	return rhs;
+}
+
+//Begin method (iterator)
+template < typename Data >
+typename List<Data>::iterator List<Data>::begin(){
+	if(head != nullptr)
+		return head->next;
+	else return nullptr;
+}
+
+//Begin method (const_iterator)
+template < typename Data >
+typename List<Data>::const_iterator List<Data>::begin() const{
+	if(head != nullptr)
+		return head->next;
+	else return nullptr;
+}
+
+//End method (iterator)
+template < typename Data >
+typename List<Data>::iterator List<Data>::end(){
+	if(tail != nullptr)
+		return tail;
+	else return nullptr;
+}
+
+//End method (const_iterator)
+template < typename Data >
+typename List<Data>::const_iterator List<Data>::end() const{
+	if(tail != nullptr)
+		return tail;
+	else return nullptr;
+}
+
+//Size
+template < typename Data >
+int List<Data>::size() const{
+	return listSize;
+}
+
+//Empty
+template < typename Data>
+bool List<Data>::empty() const{
+	return head == tail;
+}
+
+//Clear
+template < typename Data >
+void List<Data>::clear(){
+	while(head->next != tail){
+		head->next = head->next->next;
+		delete head->next->previous;
+		head->next->previous = head;
+	}
+	listSize = 0;
+}
+
+//Print list
+template < typename Data >
+void List<Data>::printList(){
+	cout<<"[ ";
+	for(auto i = begin(); i != end(); ++i){
+		cout<<*i<<" ";
+	}
+	cout<<"]"<<endl;
+}
+
+//Insert 
+template < typename Data >
+typename List<Data>::iterator List<Data>::insert( iterator itr, const Data & _x ){
+	Node * newNode = new Node(_x);
+	newNode->previous = itr.current->previous;
+	newNode->next = itr.current;
+
+	newNode->previous->next = newNode;
+	newNode->next->previous = newNode;
+	
+	++listSize;
+	
+	return itr;
+}
+
+

@@ -100,6 +100,7 @@ class List{
 		int size () const;	//	The current size of list
 		bool empty() const;	// 	State of list
 		void clear();	// Clear the List
+		void printList();	//	Print the List
 
 		Data & front () { return * begin(); }; // Return the value of first element (with iterator)
 		const Data & front() const;	// Return the value of first element (with const_iterator)
