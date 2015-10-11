@@ -103,16 +103,16 @@ class List{
 		void printList();	//	Print the List
 
 		Data & front () { return * begin(); }; // Return the value of first element (with iterator)
-		const Data & front() const;	// Return the value of first element (with const_iterator)
+		const Data & front() const { return * begin(); };	// Return the value of first element (with const_iterator)
 
-		Data & back (); // Return the value of last element (with iterator)
-		const Data & back () const; // Return the value of last element (with const_iterator)
+		Data & back () { return * (end()--); }; // Return the value of last element (with iterator)
+		const Data & back () const { return * (end()--); }; // Return the value of last element (with const_iterator)
 
 		void push_front( const Data & _x ) { insert( begin() , _x ); } // Insert an element at first position of list
-		void push_back( const Data & _x ); // Insert an element at last position of list
+		void push_back( const Data & _x ) { insert(end(), _x); }; // Insert an element at last position of list
 
-		void pop_front();	// Remove the fisrt element of list;
-		void pop_back();	// Remove the last element of list;
+		void pop_front(){ erase( begin() ); };	// Remove the fisrt element of list;
+		void pop_back() { erase( end()-- ); };	// Remove the last element of list;
 
 		iterator insert ( iterator itr, const Data & _x); //	Insert an element at the position of an iterator itr
 

@@ -297,4 +297,53 @@ typename List<Data>::iterator List<Data>::insert( iterator itr, const Data & _x 
 	return itr;
 }
 
+//Erase one element
+template < typename Data >
+typename List<Data>::iterator List<Data>::erase( iterator itr){
+	if(itr.current == tail){
+		throw runtime_error("Null point exception!");
+	}else{
+		itr.current->previous->next = itr.current->next;
+		itr.current->next->previous = itr.current->previous;
+		delete itr.current;
+	}
 
+	return itr;
+}
+
+//Erase in a range
+template < typename Data >
+typename List<Data>::iterator List<Data>::erase( iterator start, iterator end){
+	for(auto i = start; i != end; ++i){
+		erase(i);
+	}
+	if(end.current != tail){
+		erase(tail);
+	}
+
+	return end;
+}
+
+//Find an element (iterator)
+template < typename Data >
+typename List<Data>::iterator List<Data>::find( const Data & _x  ){
+	auto i = begin();
+	for(; i != end(); ++i){
+		if(*i == _x) 
+			break;
+	}
+
+	return i;
+}
+
+//Find an element (const_iterator)
+template < typename Data >
+typename List<Data>::const_iterator List<Data>::find( const Data & _x ) const{
+	auto i = begin();
+	for(; i != end(); ++i){
+		if(*i == _x) 
+			break;
+	}
+
+	return i;
+}
